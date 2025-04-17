@@ -28,8 +28,16 @@ class ImpressionProduitSeuilController extends AbstractController
     {}
 
     #[Route('/impression-produit-seuil', name: 'impression_produit_seuil')]
-    public function impressionProduit(): Response
+    public function impressionProduit(Request $request): Response
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+
         #je récupères les produits seuils de la base de données
         $produits = [];
 

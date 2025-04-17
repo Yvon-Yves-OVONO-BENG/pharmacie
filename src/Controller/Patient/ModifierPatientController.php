@@ -34,6 +34,11 @@ class ModifierPatientController extends AbstractController
     {
         # je récupère ma session
         $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
         
         #mes variables témoin pour afficher les sweetAlert
         $maSession->set('ajout', null);
@@ -56,7 +61,8 @@ class ModifierPatientController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) 
         {
             #je met le nom de la patient en CAPITAL LETTER
-            $patient->setNom($this->strService->strToUpper($patient->getNom()));
+            $patient->setNom($this->strService->strToUpper($patient->getNom()))
+            ->setTermine(0);
 
             # je prépare ma requête avec entityManager
             $this->em->persist($patient);

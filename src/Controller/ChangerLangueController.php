@@ -15,6 +15,14 @@ class ChangerLangueController extends AbstractController
         // On stocke la langue dans la session
         $request->getSession()->set('_locale', $locale);
 
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+
         // On revient sur la page précédente
         return $this->redirect($request->headers->get('referer'));
     }

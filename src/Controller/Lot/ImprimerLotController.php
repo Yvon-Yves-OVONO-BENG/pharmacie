@@ -26,6 +26,14 @@ class ImprimerLotController extends AbstractController
     #[Route('/imprimer-lot/{periode}', name: 'imprimer_lot')]
     public function imprimerLot(Request $request, $periode = 0): Response
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+        
         if ($periode == 1) 
         {
             if ($request->request->has('impressionLotPeriode')) 

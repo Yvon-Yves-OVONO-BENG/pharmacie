@@ -29,6 +29,14 @@ class ImprimerHistoriqueFactureClientController extends AbstractController
     #[Route('/imprimer-historique-commande-client', name: 'imprimer_historique_commande_client')]
     public function imprimerHistoriqueFacture(Request $request): Response
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+        
         $client = $request->request->get('client');
 
         $user = $this->userRepository->find($client);

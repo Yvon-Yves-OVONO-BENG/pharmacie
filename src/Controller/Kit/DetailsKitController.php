@@ -26,13 +26,16 @@ class DetailsKitController extends AbstractController
     {
         # je récupère ma session
         $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
         
         #mes variables témoin pour afficher les sweetAlert
         $maSession->set('ajout', null);
         $maSession->set('suppression', null);
         
-        
-
         #je récupère la kit dont je veux modifier
         $kit = $this->produitRepository->findOneBySlug([
             'slug' => $slug

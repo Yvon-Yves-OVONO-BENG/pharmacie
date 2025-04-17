@@ -27,7 +27,13 @@ class ValiderFactureController extends AbstractController
     #[Route('/valider-facture/{slug}', name: 'valider_facture')]
     public function validerFacture(Request $request, $slug): Response
     {
+        # je récupère ma session
         $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
         
         $facture = $this->factureRepository->findOneBySlug([
             'slug' => $slug

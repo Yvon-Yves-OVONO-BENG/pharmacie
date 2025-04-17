@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @IsGranted("ROLE_USER", message="Accès refusé. Espace reservé uniquement aux abonnés")
@@ -29,8 +30,15 @@ class ImprimerFactureController extends AbstractController
     {}
     
     #[Route('/imprimer-facture/{slug}', name: 'imprimer_facture')]
-    public function imprimerFacture($slug): Response
+    public function imprimerFacture(Request $request, $slug): Response
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
         $facture = $this->factureRepository->findOneBySlug([
             'slug' => $slug
             ]);

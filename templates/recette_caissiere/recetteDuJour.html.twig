@@ -176,6 +176,7 @@
 										<th>{% trans %}N°{% endtrans %}</th>
 										<th>{% trans %}Caissière{% endtrans %}</th>
 										<th>{% trans %}Net à payer{% endtrans %}</th>
+										<th>{% trans %}Total avance{% endtrans %}</th>
 										<th>{% trans %}Avance du jour{% endtrans %}</th>
 										<th>{% trans %}Reste{% endtrans %}</th>
 										<th>{% trans %}Mode paiement{% endtrans %}</th>
@@ -187,6 +188,7 @@
 										<th>{% trans %}N°{% endtrans %}</th>
 										<th>{% trans %}Caissière{% endtrans %}</th>
 										<th>{% trans %}Net à payer{% endtrans %}</th>
+										<th>{% trans %}Total avance{% endtrans %}</th>
 										<th>{% trans %}Avance du jour{% endtrans %}</th>
 										<th>{% trans %}Reste{% endtrans %}</th>
 										<th>{% trans %}Mode paiement{% endtrans %}</th>
@@ -207,11 +209,14 @@
 												<span class="bg-success px-2 py-1 text-white br-7" >{{ avanceDuJour.netAPayer|number_format }} FCFA</span>
 											</td>
 											<td>
+												<span class="bg-success px-2 py-1 text-white br-7" >{{ (avanceDuJour.netAPayer - avanceDuJour.reste)|number_format }} FCFA</span>
+											</td>
+											<td>
 												<span class="bg-warning px-2 py-1 text-white br-7" >{{ avanceDuJour.avance|number_format }} FCFA </span>
 											</td>
 
                                             <td>
-												<span class="bg-danger px-2 py-1 text-white br-7">{{ (avanceDuJour.netAPayer - avanceDuJour.avance)|number_format }} FCFA </span>
+												<span class="bg-danger px-2 py-1 text-white br-7">{{ (avanceDuJour.reste)|number_format }} FCFA </span>
 											</td>
 
 											<td>

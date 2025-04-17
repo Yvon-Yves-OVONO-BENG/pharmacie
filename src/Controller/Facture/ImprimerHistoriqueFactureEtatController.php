@@ -31,6 +31,14 @@ class ImprimerHistoriqueFactureEtatController extends AbstractController
     #[Route('/imprimer-historique-commande-etat', name: 'imprimer_historique_commande_etat')]
     public function imprimerHistoriqueFactureEtat(Request $request): Response
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+        
         $etatFacture = $request->request->get('etatFacture');
        
         $etatFacture = $this->etatFactureRepository->find($etatFacture);

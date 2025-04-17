@@ -27,10 +27,13 @@ class AfficherPriseEnChargeController extends AbstractController
     #[Route('/afficher-prise-en-charge/{code}', name: 'afficher_prise_en_charge')]
     public function afficherPatient(Request $request, $code): Response
     {
-        #je teste si le témoin n'est pas vide pour savoir s'il vient de la suppression
-        
         # je récupère ma session
         $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
         
         #mes variables témoin pour afficher les sweetAlert
         $maSession->set('ajout', null);

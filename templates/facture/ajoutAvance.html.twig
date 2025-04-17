@@ -30,7 +30,7 @@
 
             <!--Row-->
             <div class="row">
-                <div class="col-lg-6 col-md-6">
+                <div class="col-lg-4 col-md-4">
                     <div class="card box-widget widget-user border-primary">
                         <div class="card-body text-center">
                             <div class="pro-user">
@@ -43,18 +43,22 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-6 col-md-6">
+                <div class="col-lg-8 col-md-8">
                     <div class="card box-widget widget-user border-success">
                         <div class="card-body">
                             <div class="pro-user">
                                 {{ form_start(ajoutAvanceForm, {'attr': {'class':'row g-4 needs-validation', 'novalidate':''}})}}
                                     
-                                <div class="col-md-8">
-                                    {# <input type="number" name="avance" min="5" max="{{ facture.netApayer - facture.avance }}" class="form-control" id="validationCustom03" required>
-                                    <div class="invalid-feedback">
-                                        {% trans %}Veuillez saisir le montant à verser{% endtrans %}
-                                    </div> #}
+                                <div class="col-md-4">
+                                    <label for="validationCustom04" class="form-label">{% trans %}Mode de paiement{% endtrans %}</label>
+                                        {{ form_row(ajoutAvanceForm.modePaiement, {'attr': {'id':'validationCustom04'}})}}
+                                        <div class="invalid-tooltip">
+                                            {% trans %}Veuillez sélectionner le mode de paiement{% endtrans %}
+                                        </div>
+                                    </div>
 
+                                <div class="col-md-5">
+                                    
                                     <input type="hidden" name="slugFacture" value="{{ facture.slug }}">
 
                                     <label for="validationCustom04" class="form-label">{% trans %}Avance de la facture{% endtrans %}</label>
@@ -65,7 +69,7 @@
                                 </div>
                                 
                                 
-                                <div class="col-md-4 text-center">
+                                <div class="col-md-3 text-center">
                                     <label for="validationCustom04" class="form-label text-white" >{% trans %}Avance de la facture{% endtrans %}</label>
                                     
                                     <button class="btn btn-outline-primary" name="envoyer" type="submit"><i class="fe fe-plus me-2"></i> {% trans %}Verser l'avance{% endtrans %}</button>

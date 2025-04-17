@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @IsGranted("ROLE_USER", message="Accès refusé. Espace reservé uniquement aux abonnés")
@@ -24,8 +25,16 @@ class ImpressionProduitsPerimesController extends AbstractController
     {}
 
     #[Route('/produits-perimes/{bientot}', name: 'produits_perimes')]
-    public function produitsPerimes(int $bientot = 0): Response
+    public function produitsPerimes(Request $request, int $bientot = 0): Response
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+
         # la date du jour avec une heure 00:00:00
         $aujourdhui = date_create(date_format(new DateTime('now'), 'Y-m-d'), timezone_open('Pacific/Nauru'));
 

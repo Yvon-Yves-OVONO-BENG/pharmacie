@@ -30,7 +30,12 @@ class AjoutProduitPanierController extends AbstractController
     public function ajoutProduitPanier(Request $request): JsonResponse
     {
         # je récupère ma session
-        $maSession = $this->request->getSession();
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
         
         #mes variables témoin pour afficher les sweetAlert
         $maSession->set('ajout', null);

@@ -29,16 +29,18 @@ class SupprimerProduitDuKitController extends AbstractController
     #[Route('/supprimer-produit-du-kit/{id}/{slug}', name: 'supprimer_produit-du_kit')]
     public function supprimerProduotDuKit(Request $request, $id, $slug): Response
     {
-
         # je récupère ma session
         $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
         
         #mes variables témoin pour afficher les sweetAlert
         $maSession->set('ajout', null);
         $maSession->set('suppression', null);
         
-        
-
         # je récupère la kit dont je veux modifier l'état
         $produit = $this->ligneDeKitRepository->find($id);
 

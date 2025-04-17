@@ -26,6 +26,14 @@ class RecettePeriodeController extends AbstractController
     #[Route('/recette-periode', name: 'recette_periode')]
     public function recettePeriode(Request $request): Response
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+        
         if ($request->request->has('impressionFicheVente')) 
         {
             $dateDebut = date_create($request->request->get('dateDebut'));

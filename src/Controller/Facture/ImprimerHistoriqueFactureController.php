@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @IsGranted("ROLE_USER", message="Accès refusé. Espace reservé uniquement aux abonnés")
@@ -25,8 +26,16 @@ class ImprimerHistoriqueFactureController extends AbstractController
     }
     
     #[Route('/imprimer-historique-facture/{typeUser}', name: 'imprimer_historique_facture')]
-    public function imprimerHistoriqueFacture($typeUser): Response
+    public function imprimerHistoriqueFacture(Request $request, $typeUser): Response
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+
         $user = $this->getUser();
         
         $role = $user->getRoles();

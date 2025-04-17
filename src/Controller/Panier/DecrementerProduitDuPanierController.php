@@ -5,6 +5,7 @@ namespace App\Controller\Panier;
 use App\Repository\ProduitRepository;
 use App\Service\PanierService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 class DecrementerProduitDuPanierController extends AbstractController
@@ -15,8 +16,16 @@ class DecrementerProduitDuPanierController extends AbstractController
     {}
 
     #[Route('/panier-decrementer/{slug}', name: 'panier_decrementer')]
-    public function decrementer($slug)
+    public function decrementer(Request $request, $slug)
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+
         $produit = $this->produitRepository->findOneBySlug([
             'slug' => $slug
         ]);

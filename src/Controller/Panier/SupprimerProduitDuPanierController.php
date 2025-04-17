@@ -21,7 +21,14 @@ class SupprimerProduitDuPanierController extends AbstractController
     #[Route('/supprimer-produit-du-panier/{slug}', name: 'supprimer_produit_du_panier')]
     public function supprimer(Request $request, string $slug)
     {
+        # je récupère ma session
         $maSession = $request->getSession();
+        $maSession->set('produitsManquants', null);
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
 
         $produit = $this->produitRepository->findOneBySlug([
             'slug' => $slug

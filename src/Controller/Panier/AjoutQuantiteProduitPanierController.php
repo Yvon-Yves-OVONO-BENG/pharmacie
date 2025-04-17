@@ -31,7 +31,12 @@ class AjoutQuantiteProduitPanierController extends AbstractController
     public function ajoutQuantiteProduitPanier(Request $request)
     {
         # je récupère ma session
-        $maSession = $this->request->getSession();
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
         
         #mes variables témoin pour afficher les sweetAlert
         $maSession->set('ajout', null);

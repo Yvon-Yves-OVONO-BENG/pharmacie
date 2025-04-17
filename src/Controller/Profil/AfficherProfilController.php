@@ -26,12 +26,17 @@ class AfficherProfilController extends AbstractController
     #[Route('/afficher-profil/{m}', name: 'afficher_profil')]
     public function afficherProfil(Request $request, int $m = 0): Response
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+
         #je teste si le témoin n'est pas vide pour savoir s'il vient de la mise à jour
         if ($m == 1) 
         {
-            # je récupère ma session
-            $maSession = $request->getSession();
-            
             #mes variables témoin pour afficher les sweetAlert
             $maSession->set('ajout', 1);
             $maSession->set('suppression', null);
@@ -39,9 +44,6 @@ class AfficherProfilController extends AbstractController
         }
         else
         {
-            # je récupère ma session
-            $maSession = $request->getSession();
-            
             #mes variables témoin pour afficher les sweetAlert
             $maSession->set('ajout', null);
             $maSession->set('suppression', null);

@@ -30,7 +30,14 @@ class AnnulerFactureController extends AbstractController
     #[Route('/annuler-facture/{slug}', name: 'annuler_facture')]
     public function annulerFacture(Request $request, $slug): Response
     {
+        # je récupère ma session
         $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+        
         $facture = $this->factureRepository->findOneBySlug([
             'slug' => $slug
         ]);
@@ -50,18 +57,30 @@ class AnnulerFactureController extends AbstractController
             {
                 #je récupère le lot
                 $lot = $ligneDeFacture->getProduit()->getLot();
-
-                #je récupère la quantite dans le lot du produit
-                $quantiteLot = $ligneDeFacture->getProduit()->getLot()->getQuantite();
                 
                 #je récupère la quantité déjà vendu dand le lot
                 $quantiteVenduLot = $ligneDeFacture->getProduit()->getLot()->getVendu();
 
-                #je restitue la quentité du produit en stock
-                $lot->setQuantite($quantiteLot + $quantiteFacture)
-                    ->setVendu($quantiteVenduLot - $quantiteFacture) ;
+                #je restitue la quantité du produit en stock
+                $lot->setVendu($quantiteVenduLot + $quantiteFacture) ;
 
                 $this->em->persist($lot);
+            }
+            else 
+            {
+                foreach ($ligneDeFacture->getProduit()->getProduitLigneDeKits() as $ligneDeKit) 
+                { 
+                    #je récupère le lot
+                    $lot = $ligneDeKit->getProduit()->getLot();
+                    
+                    #je récupère la quantité déjà vendu dand le lot
+                    $quantiteVenduLot = $ligneDeKit->getProduit()->getLot()->getVendu();
+
+                    #je restitue la quantité du produit en stock
+                    $lot->setVendu($quantiteVenduLot + $quantiteFacture) ;
+
+                    $this->em->persist($lot);
+                }
             }
             
         }

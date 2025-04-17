@@ -30,6 +30,14 @@ class ImpressionFicheEntreeController extends AbstractController
     #[Route('/impression-fiche-entree/{periode}', name: 'impression_fiche_entree')]
     public function impressionFicheEntree(Request $request, int $periode = 0): Response
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+        
         $dateDebut = null;
         $dateFin = null;
 

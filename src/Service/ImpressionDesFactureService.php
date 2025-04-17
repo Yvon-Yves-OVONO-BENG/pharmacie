@@ -121,9 +121,9 @@ class ImpressionDesFactureService extends FPDF
                 $pdf->SetFont('Arial', '', 8);
                 $pdf->Cell(7, 5, utf8_decode($i), 1, 0, 'C', true);
                 $pdf->Cell(90, 5, utf8_decode($detailsFactur->getProduit()->getLibelle() ? $detailsFactur->getProduit()->getLibelle() : $detailsFactur->getProduit()->getLibelle()), 1, 0, 'L', true);
-                $pdf->Cell(25, 5, utf8_decode(number_format($detailsFactur->getPrix()), 0, '', ' '), 1, 0, 'C', true);
-                $pdf->Cell(20, 5, utf8_decode(number_format($detailsFactur->getQuantite()), 0, '', ' '), 1, 0, 'C', true);
-                $pdf->Cell(40, 5, utf8_decode(number_format($detailsFactur->getPrixQuantite()), 0, '', ' '), 1, 1, 'C', true);
+                $pdf->Cell(25, 5, utf8_decode(number_format($detailsFactur->getPrix(), 0, '', ' ')), 1, 0, 'C', true);
+                $pdf->Cell(20, 5, utf8_decode(number_format($detailsFactur->getQuantite(), 0, '', ' ')), 1, 0, 'C', true);
+                $pdf->Cell(40, 5, utf8_decode(number_format($detailsFactur->getPrixQuantite(), 0, '', ' ')), 1, 1, 'C', true);
 
                 $i++;
                 
@@ -132,7 +132,7 @@ class ImpressionDesFactureService extends FPDF
             $pdf->SetX(15);
             $pdf->SetFont('Arial', 'B', 10);
             $pdf->Cell(142, 5, utf8_decode('Montant HT'), 0, 0, 'R');
-            $pdf->Cell(40, 5, utf8_decode(number_format($factur->getNetApayer()), 0, '', ' '), 1, 1, 'C');
+            $pdf->Cell(40, 5, utf8_decode(number_format($factur->getNetApayer(), 0, '', ' ')), 1, 1, 'C');
 
             $pdf->SetX(15);
             $pdf->Cell(142, 5, utf8_decode('TVA'), 0, 0, 'R');
@@ -140,7 +140,7 @@ class ImpressionDesFactureService extends FPDF
 
             $pdf->SetX(15);
             $pdf->Cell(142, 5, utf8_decode('Montant TTC'), 0, 0, 'R');
-            $pdf->Cell(40, 5, utf8_decode(number_format($factur->getNetApayer()), 0, '', ' '), 1, 1, 'C');
+            $pdf->Cell(40, 5, utf8_decode(number_format($factur->getNetApayer(), 0, '', ' ')), 1, 1, 'C');
 
             $pdf->SetFont('Arial', 'B', 12);
             $pdf->SetX(15);

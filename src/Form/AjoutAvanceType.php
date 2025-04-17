@@ -3,8 +3,11 @@
 namespace App\Form;
 
 use App\Entity\Facture;
+use App\Entity\ModePaiement;
 use Symfony\Component\Form\AbstractType;
+use App\Repository\ModePaiementRepository;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -40,6 +43,20 @@ class AjoutAvanceType extends AbstractType
                         'message' => $this->translator->trans("L'avance doit être inférieure ou égale à ").number_format($reste, 0, '', ' ')." ! ",
                     ])
                 ]
+            ])
+            ->add('modePaiement', EntityType::class, [
+                'class' => ModePaiement::class,
+                'choice_label' => 'modePaiement',
+                'label' => false,
+                'required' => true,
+                'attr' => [
+                    'class' => 'form-control select2-show-search',
+                    'placeholder' => $this->translator->trans('- - -'),
+                ],
+                'query_builder' => function(ModePaiementRepository $modePaiementRepository){
+                    
+                    return $modePaiementRepository->createQueryBuilder('m')->orderBy('m.modePaiement');
+                },
             ])
         ;
     }

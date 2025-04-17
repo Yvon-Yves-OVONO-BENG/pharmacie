@@ -123,7 +123,8 @@ class FactureRepository extends ServiceEntityRepository
     {
         $queryBuilder = $this->em->createQueryBuilder();
         $queryBuilder
-                ->select('SUM(f.avance) AS avance, SUM(f.netAPayer) AS netAPayer, u.nom AS caissiere, u.id AS id, m.modePaiement AS modePaiement, count(f.id) AS NOMBRE, u.photo AS PHOTO')
+                ->select('f.avance AS avance, f.reste AS reste, f.netAPayer AS netAPayer, u.nom AS caissiere, 
+                u.id AS id, m.modePaiement AS modePaiement, f.id AS NOMBRE, u.photo AS PHOTO')
                 ->from(Facture::class, 'f')
                 ->innerJoin(User::class, 'u')
                 ->innerJoin(ModePaiement::class, 'm')
@@ -133,9 +134,9 @@ class FactureRepository extends ServiceEntityRepository
                 ->andWhere('f.modePaiement = m.id')
                 ->andWhere('f.etatFacture = e.id')
                 ->andWhere('f.dateFactureAt = :dateFacture')
-                ->andWhere('f.netAPayer > f.avance ')
+                // ->andWhere('f.netAPayer > f.avance ')
                 ->setParameter('dateFacture', $dateFacture)
-                ->groupBy('modePaiement', 'caissiere')
+                // ->groupBy('modePaiement', 'caissiere')
                 ;
 
         $query = $queryBuilder->getQuery();

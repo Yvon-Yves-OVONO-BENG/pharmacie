@@ -28,6 +28,11 @@ class ListeExamenController extends AbstractController
         # je récupère ma session
         $maSession = $request->getSession();
 
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+
         if ($a == 1 || $m == 0 || $s == 0) 
         {
             #mes variables témoin pour afficher les sweetAlert

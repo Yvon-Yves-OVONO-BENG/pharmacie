@@ -38,6 +38,11 @@ class AjouterKitController extends AbstractController
     {
         # je récupère ma session
         $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
         
         #mes variables témoin pour afficher les sweetAlert
         $maSession->set('ajout', null);
@@ -113,8 +118,6 @@ class AjouterKitController extends AbstractController
             #j'affecte 1 à ma variable pour afficher le message
             $maSession->set('ajout', 1);
             
-            
-
             #je declare une nouvelle instance
             $kit = new Produit;
 

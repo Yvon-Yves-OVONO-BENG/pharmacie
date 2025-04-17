@@ -41,6 +41,11 @@ class PanierAfficherController extends AbstractController
         # je récupère ma session
         $maSession = $request->getSession();
         
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+        
         #mes variables témoin pour afficher les sweetAlert
         if ($s == 1) 
         {
@@ -94,7 +99,7 @@ class PanierAfficherController extends AbstractController
                 {
                     case ConstantsClass::CASH:
                         ///je récupère l'état EN COURS pour setter la cammande qui vient d'être passé
-                        $cash = $this->etatFacture->findOneByEtatFacture([
+                        $cash = $this->etatFactureRepository->findOneByEtatFacture([
                             'etatFacture' => ConstantsClass::SOLDE
                         ]);
                         $facture->setEtatFacture($cash);
@@ -102,7 +107,7 @@ class PanierAfficherController extends AbstractController
 
                     case ConstantsClass::PRIS_EN_CHARGE:
                         ///je récupère l'état EN COURS pour setter la cammande qui vient d'être passé
-                        $prisEnCharge = $this->etatFacture->findOneByEtatFacture([
+                        $prisEnCharge = $this->etatFactureRepository->findOneByEtatFacture([
                             'etatFacture' => ConstantsClass::NON_SOLDE
                         ]);
                         $facture->setEtatFacture($prisEnCharge);
@@ -110,7 +115,7 @@ class PanierAfficherController extends AbstractController
 
                     case ConstantsClass::CREDIT:
                         ///je récupère l'état EN COURS pour setter la cammande qui vient d'être passé
-                        $credit = $this->etatFacture->findOneByEtatFacture([
+                        $credit = $this->etatFactureRepository->findOneByEtatFacture([
                             'etatFacture' => ConstantsClass::SOLDE
                         ]);
                         $facture->setEtatFacture($credit);
@@ -238,6 +243,7 @@ class PanierAfficherController extends AbstractController
                         }
                         
                         $facture->setNetAPayer($this->panierService->getTotal());
+
                         break;
 
                     case ConstantsClass::PRIS_EN_CHARGE:
@@ -247,8 +253,8 @@ class PanierAfficherController extends AbstractController
                         ]);
                         
                         $facture->setEtatFacture($nonSolde)
-                        ->setNetAPayer($this->panierService->getTotal()*2)
-                        ;
+                        ->setNetAPayer($this->panierService->getTotal() + (($this->panierService->getTotal() * 20)/100));
+
                         break;
 
                     case ConstantsClass::CREDIT:
@@ -318,8 +324,18 @@ class PanierAfficherController extends AbstractController
                         ->setHeure($now)
                         ->setReference($reference)
                         ->setSlug($slug.$id)
-                        ->setAnnulee(0)
-                        ;
+                        ->setAnnulee(0);
+
+                        if ($facture->getModePaiement()->getModePaiement() == ConstantsClass::PRIS_EN_CHARGE) 
+                        {
+                            $facture->setReste(($this->panierService->getTotal() + (($this->panierService->getTotal() * 20)/100)) - $facture->getAvance());
+                        } 
+                        else 
+                        {
+                            $facture->setReste($facture->getNetAPayer() - $facture->getAvance());
+                        }
+                        
+                        
                 
                 $this->em->persist($facture);
                 
@@ -365,29 +381,49 @@ class PanierAfficherController extends AbstractController
                     }
                     if ($panierProduit->produit->isKit()) 
                     {   
+                        $produitsManquants = [];
                         foreach ($panierProduit->produit->getProduitLigneDeKits() as $ligneDeKit) 
                         {   
                             #quantite de la facture
                             $quantiteFacture = $ligneDeKit->getQuantite() * $panierProduit->qte;
                             
                             // dd($lot);
+                            
                             if ($ligneDeKit->getProduit()->getLot()) 
                             {
-                                #nombreVendu dans un lot
-                                $ancienneQuantiteVenduLot = $ligneDeKit->getProduit()->getLot()->getVendu();
+                                if (($ligneDeKit->getProduit()->getLot()->getQuantite() - $ligneDeKit->getProduit()->getLot()->getVendu()) == 0) 
+                                {
+                                    $produitsManquants[] = $ligneDeKit->getProduit();
+                                } 
+                                else 
+                                {
+                                    #nombreVendu dans un lot
+                                    $ancienneQuantiteVenduLot = $ligneDeKit->getProduit()->getLot()->getVendu();
 
-                                #nouvelle quantité vendu
-                                $nouvelleQuaniteVenduLot = $ancienneQuantiteVenduLot + $quantiteFacture;
-                                
-                                $ligneDeKit->getProduit()->getLot()->setVendu($nouvelleQuaniteVenduLot);
-                                $this->em->persist($ligneDeKit->getProduit()->getLot());
+                                    #nouvelle quantité vendu
+                                    $nouvelleQuaniteVenduLot = $ancienneQuantiteVenduLot + $quantiteFacture;
+                                    
+                                    $ligneDeKit->getProduit()->getLot()->setVendu($nouvelleQuaniteVenduLot);
+                                    $this->em->persist($ligneDeKit->getProduit()->getLot());
+                                }
 
-                            }
-
-                            $this->em->persist($ligneDeFacture);
-                            $this->em->persist($ligneDeKit);
+                            }  
                             
                         }
+
+                        if(count($produitsManquants) != 0 )
+                        {
+                            #j'affiche le message de confirmation d'ajout
+                            $this->addFlash('danger', $this->translator->trans('Le kit : '.$panierProduit->produit->getLibelle()." est incomplet !"));
+                            
+                            $maSession->set('produitsManquants', $produitsManquants);
+                            
+                            return $this->redirectToRoute('panier_afficher');
+                        }
+
+                        $this->em->persist($ligneDeFacture);
+                        $this->em->persist($ligneDeKit);
+
                     } 
                     else 
                     {

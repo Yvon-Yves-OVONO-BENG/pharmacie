@@ -27,17 +27,19 @@ class SupprimerCommandeController extends AbstractController
     
     #[Route('/supprimer-commande/{slug}', name: 'supprimer_commande')]
     public function supprimerCommande(Request $request, string $slug): Response
-    {
-
+    {   
         # je récupère ma session
         $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
         
         #mes variables témoin pour afficher les sweetAlert
         $maSession->set('ajout', null);
         $maSession->set('suppression', null);
         
-        
-
         # je récupère la commande dont je veux modifier l'état
         $commande = $this->commandeRepository->findOneBySlug([
             'slug' => $slug

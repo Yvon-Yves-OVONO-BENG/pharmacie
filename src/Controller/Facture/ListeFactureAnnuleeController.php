@@ -28,13 +28,16 @@ class ListeFactureAnnuleeController extends AbstractController
     {
         # je récupère ma session
         $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
         
         #mes variables témoin pour afficher les sweetAlert
         $maSession->set('ajout', null);
         $maSession->set('suppression', null);
         
-        
-
         // Sinon j'affiche toutes les factures
         $factures = $this->factureRepository->findBy([
                 'annulee' => 1

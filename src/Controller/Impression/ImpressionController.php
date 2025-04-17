@@ -19,6 +19,11 @@ class ImpressionController extends AbstractController
         # je récupère ma session
         $maSession = $request->getSession();
 
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+
         #je supprime mes variables de la session
         $maSession->set('ajout', null) ;
         $maSession->set('misAjour', null);

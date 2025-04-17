@@ -30,7 +30,12 @@ class AjoutProduitPanierCopieController extends AbstractController
     public function ajoutProduitPanierCopie(Request $request, string $slug = null, string $position = null, $qte = 0)
     {
         # je récupère ma session
-        $maSession = $this->request->getSession();
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
         
         #mes variables témoin pour afficher les sweetAlert
         $maSession->set('ajout', null);

@@ -31,6 +31,12 @@ class AfficherProduitController extends AbstractController
     {
         # je récupère ma session
         $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+        
         $nombreProduits = count($this->panierService->getDetailsPanierProduits($request));
         $totalApayer = $this->panierService->getTotal($request);
 

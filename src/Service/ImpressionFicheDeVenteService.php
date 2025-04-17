@@ -65,14 +65,19 @@ class ImpressionFicheDeVenteService extends FPDF
         {
             // $pdf->Ln(15);
             $pdf->SetX(15);
-            // $pdf->Cell(100, 5, 'FICHE DE VENTE DE : '.$caissiere->getNom(), 0, 1, 'L', 0);
-            $pdf->Cell(0, 5, 'FICHE DE VENTE', 0, 1, 'C', 0);
+            if ($caissiere) 
+            {
+                $pdf->Cell(0, 5, 'FICHE DE VENTE DE : '.$caissiere->getNom(), 0, 1, 'C', 0);
+                $pdf->Cell(0, 5, 'Contact : '.$caissiere->getContact(), 0, 1, 'C', 0);
+            } 
+            else 
+            {
+                $pdf->Cell(0, 5, 'FICHE DE VENTE', 0, 1, 'C', 0);
 
-            $pdf->SetX(15);
-            $pdf->SetFont('Arial', 'B', 10);
-            // $pdf->Cell(80.5, 5, 'Contact : '.$caissiere->getContact(), 0, 1, 'L', 0);
-            // $pdf->Cell(80.5, 5, 'Contact : ', 0, 1, 'L', 0);
-    
+                $pdf->SetX(15);
+                $pdf->SetFont('Arial', 'B', 10);
+            }
+            
         } 
         else 
         {
@@ -197,17 +202,18 @@ class ImpressionFicheDeVenteService extends FPDF
         $pdf->Cell(60, 5, utf8_decode('CREDIT'), 1, 0, 'C', true);
         $pdf->SetFont('Arial', '', 10);
         $pdf->Cell(30, 5, utf8_decode(number_format($nombreCreditDuJour, 0, '', ' ')), 1, 0, 'C');
-        $pdf->Cell(60, 5, utf8_decode(number_format($montantCreditDuJour, 0, '', ' ')), 1, 0, 'C');
+        // $pdf->Cell(60, 5, utf8_decode(number_format($montantCreditDuJour, 0, '', ' ')), 1, 0, 'C');
+        $pdf->Cell(60, 5, utf8_decode(''), 1, 0, 'C');
         $pdf->Cell(60, 5, utf8_decode(number_format($montantAvanceCreditDuJour, 0, '', ' ')), 1, 0, 'C');
-        $pdf->Cell(60, 5, utf8_decode(number_format(($montantCreditDuJour - $montantAvanceCreditDuJour), 0, '', ' ')), 1, 1, 'C');
+        $pdf->Cell(60, 5, utf8_decode(''), 1, 1, 'C');
 
-        $pdf->SetX(15);
-        $pdf->SetFont('Arial', 'B', 12);
-        $pdf->Cell(60, 5, utf8_decode('TOTAUX'), 1, 0, 'C', true);
-        $pdf->Cell(30, 5, utf8_decode(number_format(($nombreCashDuJour + $nombrePrisEnChargeDuJour + $nombreCreditDuJour), 0, '', ' ')), 1, 0, 'C', true);
-        $pdf->Cell(60, 5, utf8_decode(number_format(($montantCashDuJour + $montantPrisEnChargeDuJour + $montantCreditDuJour), 0, '', ' ')), 1, 0, 'C', true);
-        $pdf->Cell(60, 5, utf8_decode(number_format(($montantAvanceCashDuJour + $montantAvancePrisEnChargeDuJour + $montantAvanceCreditDuJour), 0, '', ' ')), 1, 0, 'C', true);
-        $pdf->Cell(60, 5, utf8_decode(number_format(($montantCashDuJour - $montantAvanceCashDuJour + $montantPrisEnChargeDuJour - $montantAvancePrisEnChargeDuJour + $montantCreditDuJour - $montantAvanceCreditDuJour), 0, '', ' ')), 1, 1, 'C', true);
+        // $pdf->SetX(15);
+        // $pdf->SetFont('Arial', 'B', 12);
+        // $pdf->Cell(60, 5, utf8_decode('TOTAUX'), 1, 0, 'C', true);
+        // $pdf->Cell(30, 5, utf8_decode(number_format(($nombreCashDuJour + $nombrePrisEnChargeDuJour + $nombreCreditDuJour), 0, '', ' ')), 1, 0, 'C', true);
+        // $pdf->Cell(60, 5, utf8_decode(number_format(($montantCashDuJour + $montantPrisEnChargeDuJour + $montantCreditDuJour), 0, '', ' ')), 1, 0, 'C', true);
+        // $pdf->Cell(60, 5, utf8_decode(number_format(($montantAvanceCashDuJour + $montantAvancePrisEnChargeDuJour + $montantAvanceCreditDuJour), 0, '', ' ')), 1, 0, 'C', true);
+        // $pdf->Cell(60, 5, utf8_decode(number_format(($montantCashDuJour - $montantAvanceCashDuJour + $montantPrisEnChargeDuJour - $montantAvancePrisEnChargeDuJour + $montantCreditDuJour - $montantAvanceCreditDuJour), 0, '', ' ')), 1, 1, 'C', true);
 
         $pdf->Ln(10);
         $pdf->SetX(15);
@@ -219,7 +225,12 @@ class ImpressionFicheDeVenteService extends FPDF
         return $pdf;
     }
 
-
+    /**
+     * Undocumented function
+     *
+     * @param PaginationPaysage $pdf
+     * @return PaginationPaysage
+     */
     public function enteteTableau(PaginationPaysage $pdf): PaginationPaysage
     {
         $pdf->SetX(15);
@@ -236,7 +247,14 @@ class ImpressionFicheDeVenteService extends FPDF
         return $pdf;
     }
 
-
+    /**
+     * Undocumented function
+     *
+     * @param PaginationPaysage $pdf
+     * @param integer $i
+     * @param Facture $facture
+     * @return PaginationPaysage
+     */
     public function contenuTableau(PaginationPaysage $pdf, int $i, Facture $facture): PaginationPaysage
     {
         if ($i % 2 == 0) 
@@ -256,21 +274,29 @@ class ImpressionFicheDeVenteService extends FPDF
         $pdf->Cell(50, 5, utf8_decode(date_format($facture->getDateFactureAt(), 'd-m-Y').utf8_decode(' à ').date_format($facture->getHeure(), 'H:i:s')), 1, 0, 'C', true);
         $pdf->Cell(30, 5, utf8_decode(number_format($facture->getNetApayer(), 0, '', ' ')), 1, 0, 'C', true);
         $pdf->Cell(30, 5, utf8_decode(number_format($facture->getAvance(), 0, '', ' ')), 1, 0, 'C', true);
-        $pdf->Cell(30, 5, utf8_decode(number_format(($facture->getNetApayer() - $facture->getAvance()), 0, '', ' ')), 1, 1, 'C', true);
+        $pdf->Cell(30, 5, utf8_decode(number_format(($facture->getReste()), 0, '', ' ')), 1, 1, 'C', true);
 
         return $pdf;
     }
 
-
+    /**
+     * Undocumented function
+     *
+     * @param PaginationPaysage $pdf
+     * @param integer $montant
+     * @param integer $avance
+     * @param integer $reste
+     * @return PaginationPaysage
+     */
     public function basTableau(PaginationPaysage $pdf, int $montant, int $avance, int $reste): PaginationPaysage
     {
         $pdf->SetX(15);
         $pdf->SetFillColor(240,240,240);
         $pdf->SetFont('Arial', 'B', 12);
         $pdf->Cell(180, 5, utf8_decode('MONTANT'), 1, 0, 'C', true);
-        $pdf->Cell(30, 5, utf8_decode(number_format($montant, 0, '', ' ')), 1, 0, 'C', true);
+        $pdf->Cell(30, 5, utf8_decode(' '), 1, 0, 'C', true);
         $pdf->Cell(30, 5, utf8_decode(number_format($avance, 0, '', ' ')), 1, 0, 'C', true);
-        $pdf->Cell(30, 5, utf8_decode(number_format($reste, 0, '', ' ')), 1, 1, 'C', true);
+        $pdf->Cell(30, 5, utf8_decode(' '), 1, 1, 'C', true);
 
         return $pdf;
     }

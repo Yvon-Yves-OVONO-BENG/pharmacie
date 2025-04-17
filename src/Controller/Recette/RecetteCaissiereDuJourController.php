@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\Date;
 
 /**
@@ -25,8 +26,16 @@ class RecetteCaissiereDuJourController extends AbstractController
     {}
 
     #[Route('/recette-caissiere-du-jour', name: 'recette_caissiere_du_jour')]
-    public function recetteCaissiereDuJour(): Response
+    public function recetteCaissiereDuJour(Request $request): Response
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+
         #date du jour
         $aujourdhui = date_create(date_format(new DateTime('now'), 'Y-m-d'), timezone_open('Pacific/Nauru'));
         // $aujourdhui = new DateTime("now");

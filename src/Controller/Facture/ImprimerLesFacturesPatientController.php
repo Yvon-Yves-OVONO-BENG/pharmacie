@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @IsGranted("ROLE_USER", message="Accès refusé. Espace reservé uniquement aux abonnés")
@@ -30,8 +31,16 @@ class ImprimerLesFacturesPatientController extends AbstractController
     {}
     
     #[Route('/imprimer-les-factures-patient/{codePatient}', name: 'imprimer_les_factures_patient')]
-    public function imprimerFacture($codePatient): Response
+    public function imprimerFacture(Request $request, $codePatient): Response
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+
         #je récupère le patient dont je veux imprimer les prise en charges
         $patient = $this->patientRepository->findOneByCode([
             'code' => $codePatient

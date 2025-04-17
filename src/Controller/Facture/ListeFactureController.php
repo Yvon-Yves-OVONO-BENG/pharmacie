@@ -31,6 +31,12 @@ class ListeFactureController extends AbstractController
     {
         # je récupère ma session
         $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+        
         #je teste si le témoin n'est pas vide pour savoir s'il vient de la mise à jour
         if ($a == 1) 
         {

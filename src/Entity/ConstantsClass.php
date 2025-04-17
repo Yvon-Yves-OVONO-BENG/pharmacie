@@ -28,6 +28,8 @@ class ConstantsClass
     public const CASH = 'CASH';
     public const CREDIT = 'CRÉDIT';
     public const PRIS_EN_CHARGE = 'PRIS EN CHARGE';
+    // public const MOMO = 'MOMO';
+    // public const OM = 'OM';
 
     public const SOLDE = 'SOLDE';
     public const NON_SOLDE = 'NON SOLDE';

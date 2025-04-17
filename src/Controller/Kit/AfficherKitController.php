@@ -34,12 +34,14 @@ class AfficherKitController extends AbstractController
         # je récupère ma session
         $maSession = $request->getSession();
 
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+
         #je teste si le témoin n'est pas vide pour savoir s'il vient de la suppression
         if ($s == 1) 
         {
-            # je récupère ma session
-            $maSession = $request->getSession();
-            
             #mes variables témoin pour afficher les sweetAlert
             $maSession->set('ajout', null);
             $maSession->set('suppression', 1);

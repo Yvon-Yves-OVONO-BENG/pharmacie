@@ -27,8 +27,16 @@ class ImprimerCommandeController extends AbstractController
     {}
 
     #[Route('/imprimer-commande/{slug}', name: 'imprimer_commande')]
-    public function imprimerCommande(string $slug = null): Response
+    public function imprimerCommande(Request $request, string $slug = null): Response
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+
         if ($slug) 
         {
             $commande = $this->commandeRepository->findOneBySlug([

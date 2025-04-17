@@ -47,6 +47,11 @@ class AccueilController extends AbstractController
         # je récupère ma session
         $maSession = $request->getSession();
 
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+
         #mes variables témoin pour afficher les sweetAlert
         $maSession->set('ajout', null);
         $maSession->set('miseAjour', null);
@@ -62,6 +67,17 @@ class AccueilController extends AbstractController
         {   
             return $this->redirectToRoute('app_logout');
         }
+
+        // $factures = $this->factureRepository->findAll();
+
+        // foreach ($factures as $facture) 
+        // {
+        //     $facture->setReste($facture->getNetAPayer() - $facture->getAvance());
+
+        //     $this->em->persist($facture);
+        // }
+
+        // $this->em->flush();
 
         $factures = [];
         $facturesDuJour = [];
@@ -179,7 +195,8 @@ class AccueilController extends AbstractController
 
             #les commandes
             #je recupère toutes les commandes pour compter
-            $commandes = $this->commandeRepository->findBy([], ['id' => 'DESC' ]);
+            // $commandes = $this->commandeRepository->findBy([], ['id' => 'DESC' ]);
+            $commandes = $this->commandeRepository->findAll();
 
             ###############################
             #mes variables

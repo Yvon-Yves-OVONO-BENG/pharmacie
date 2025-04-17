@@ -2,6 +2,7 @@
 
 namespace App\Service;
 
+use App\Entity\ConstantsClass;
 use Fpdf\Fpdf;
 use App\Service\EntetePaysage;
 use App\Service\EntetePortrait;
@@ -57,7 +58,16 @@ class ImpressionFactureService extends FPDF
             $pdf->SetX(15);
             $pdf->Cell(120, 5, utf8_decode("Nom du client :".$facture->getPatient()->getNom()), 0, 0, 'L', 0);
             $pdf->SetFont('Arial', 'B', 10);
-            $pdf->Cell(62, 5, utf8_decode("Prescrit par :  ".$facture->getPrescripteur()->getPrescripteur()), 0, 1, 'R', 0);
+
+            if ($facture->getPrescripteur() == null) 
+            {
+                $pdf->Cell(62, 5, utf8_decode("Prescrit par : // "), 0, 1, 'R', 0);
+            }
+            else 
+            {
+                $pdf->Cell(62, 5, utf8_decode("Prescrit par :  ".$facture->getPrescripteur()->getPrescripteur()), 0, 1, 'R', 0);
+            }
+            
             
             $pdf->SetX(15);
             $pdf->Cell(0, 5, utf8_decode("Date de naissance : ".date_format($facture->getPatient()->getDateNaissanceAt(), 'd-m-Y')), 0, 1, 'L', 0);
@@ -69,7 +79,7 @@ class ImpressionFactureService extends FPDF
             $pdf->Cell(0, 5, utf8_decode("Pays : ".$facture->getPatient()->getPays()->getPays()), 0, 1, 'L', 0);
 
             $pdf->SetX(15);
-            $pdf->Cell(0, 5, utf8_decode("Téléphone : ".$facture->getPatient()->getTelephone()), 0, 1, 'L', 0);
+            $pdf->Cell(0, 5, utf8_decode("Téléphone : ".$facture->getContactPatient()), 0, 1, 'L', 0);
         } 
         else 
         {
@@ -195,18 +205,18 @@ class ImpressionFactureService extends FPDF
             
         }
 
-        $pdf->SetX(15);
-        $pdf->SetFont('Arial', 'B', 10);
-        $pdf->Cell(142, 5, utf8_decode('Montant HT'), 0, 0, 'R');
-        $pdf->Cell(40, 5, utf8_decode(number_format($facture->getNetApayer(), 0, '', ' ')), 1, 1, 'C');
+        //$pdf->SetX(15);
+        //$pdf->SetFont('Arial', 'B', 10);
+        //$pdf->Cell(142, 5, utf8_decode('Montant HT'), 0, 0, 'R');
+        //$pdf->Cell(40, 5, utf8_decode(number_format($facture->getNetApayer(), 0, '', ' ')), 1, 1, 'C');
 
-        $pdf->SetX(15);
-        $pdf->Cell(142, 5, utf8_decode('TVA'), 0, 0, 'R');
-        $pdf->Cell(40, 5, utf8_decode("0%"), 1, 1, 'C');
+        //$pdf->SetX(15);
+        //$pdf->Cell(142, 5, utf8_decode('TVA'), 0, 0, 'R');
+        //$pdf->Cell(40, 5, utf8_decode("0%"), 1, 1, 'C');
 
-        $pdf->SetX(15);
-        $pdf->Cell(142, 5, utf8_decode('Montant TTC'), 0, 0, 'R');
-        $pdf->Cell(40, 5, utf8_decode(number_format($facture->getNetApayer(), 0, '', ' ')), 1, 1, 'C');
+        //$pdf->SetX(15);
+        //$pdf->Cell(142, 5, utf8_decode('Montant TTC'), 0, 0, 'R');
+        //$pdf->Cell(40, 5, utf8_decode(number_format($facture->getNetApayer(), 0, '', ' ')), 1, 1, 'C');
 
         $pdf->SetFont('Arial', 'B', 12);
         $pdf->SetX(15);
@@ -214,15 +224,44 @@ class ImpressionFactureService extends FPDF
         $pdf->Cell(142, 5, utf8_decode('NET A PAYER'), 0, 0, 'R');
         $pdf->Cell(40, 5, utf8_decode(number_format($facture->getNetApayer(), 0, '', ' ')." FCFA"), 1, 1, 'C', true);
 
-        $pdf->SetX(15);
-        $pdf->SetFillColor(202, 219, 255);
-        $pdf->Cell(142, 5, utf8_decode('AVANCE'), 0, 0, 'R');
-        $pdf->Cell(40, 5, utf8_decode(number_format($facture->getAvance(), 0, '', ' ')." FCFA"), 1, 1, 'C', true);
+        if ($facture->getModePaiement()->getModePaiement() == ConstantsClass::PRIS_EN_CHARGE ) 
+        {
+            $pdf->SetX(15);
+            $pdf->SetFillColor(202, 219, 255);
+            $pdf->Cell(142, 5, utf8_decode('Total avance'), 0, 0, 'R');
+            $pdf->Cell(40, 5, utf8_decode("00 FCFA"), 1, 1, 'C', true);
+            
+            $pdf->SetX(15);
+            $pdf->SetFillColor(202, 219, 255);
+            $pdf->Cell(142, 5, utf8_decode('Avance du jour'), 0, 0, 'R');
+            $pdf->Cell(40, 5, utf8_decode("00 FCFA"), 1, 1, 'C', true);
+            
+            $pdf->SetX(15);
+            $pdf->SetFillColor(202, 219, 255);
+            $pdf->Cell(142, 5, utf8_decode('Reste'), 0, 0, 'R');
+            $pdf->Cell(40, 5, utf8_decode(number_format($facture->getNetApayer(), 0, '', ' ')." FCFA"), 1, 1, 'C', true);
 
-        $pdf->SetX(15);
-        $pdf->SetFillColor(202, 219, 255);
-        $pdf->Cell(142, 5, utf8_decode('RESTE'), 0, 0, 'R');
-        $pdf->Cell(40, 5, utf8_decode(number_format($facture->getNetApayer() - $facture->getAvance(), 0, '', ' ')." FCFA"), 1, 1, 'C', true);
+        }
+        else 
+        {
+            $pdf->SetX(15);
+            $pdf->SetFillColor(202, 219, 255);
+            $pdf->Cell(142, 5, utf8_decode('Total avance'), 0, 0, 'R');
+            $pdf->Cell(40, 5, utf8_decode(number_format($facture->getNetApayer() - $facture->getReste(), 0, '', ' ')." FCFA"), 1, 1, 'C', true);
+            
+            $pdf->SetX(15);
+            $pdf->SetFillColor(202, 219, 255);
+            $pdf->Cell(142, 5, utf8_decode('Avance du jour'), 0, 0, 'R');
+            $pdf->Cell(40, 5, utf8_decode(number_format($facture->getAvance(), 0, '', ' ')." FCFA"), 1, 1, 'C', true);
+            
+            $pdf->SetX(15);
+            $pdf->SetFillColor(202, 219, 255);
+            $pdf->Cell(142, 5, utf8_decode('Reste'), 0, 0, 'R');
+            $pdf->Cell(40, 5, utf8_decode(number_format($facture->getReste(), 0, '', ' ')." FCFA"), 1, 1, 'C', true);
+
+        }
+        
+        
 
         $pdf->Ln(-5);
         $pdf->SetX($pdf->GetX() + 15);

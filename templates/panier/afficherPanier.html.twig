@@ -23,9 +23,19 @@
 	</style>
 {% endblock %}
 {% block body %}
+
+   
+
     <!-- App-Content -->
     <div class="hor-content main-content">
         <div class="container">
+
+             {% for message in app.flashes('danger')  %}
+                <div class="alert alert-danger mt-5" role="alert"><button type="button" class="btn-close" data-bs-dismiss="alert" aria-hidden="true">×</button>
+                    <i class="fa fa-frown-o me-2" aria-hidden="true"></i>
+                    {{ message }} Ci-dessous les produits manquants
+                </div>
+            {% endfor %}
             {% if panierVide == true %}
                 <script>
 					// Exemple d'utilisation de SweetAlert2
@@ -49,6 +59,18 @@
 				</script>
                 {% else %}
                 <!-- Row-->
+                {% set maSession = app.session %}
+                {# <pre>
+                    {{ dump(maSession.get('produitsManquants')) }}
+                </pre> #}
+                {% if maSession.get('produitsManquants') != 0 %}
+                    
+                        {% for produit in maSession.get('produitsManquants') %}
+                            <span class="badge bg-danger">{{ produit.libelle }}</span>
+                        {% endfor %}
+                  
+                {% endif %}
+                
                 <div class="row" style="margin-top: 20px !important;" >
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xl-12">
                         <div class="card border-primary">
@@ -90,14 +112,14 @@
                                         {% set i = 1 %}
                                         <form action="{{ path('ajout_quantite_produit_panier')}}" method="post">
                                             
-                                            <input type="hidden" name="nombreProduits" value="{{ produits|length }}">
+                                            <input type="hidden" name="nombreProduits" value="{{ produits|length|number_format }}">
                                             {% for produit in produits %}
                                                             
                                                 <tr class="cart-table attach-supportfiles">
                                                     <td class="infoTable"><span class="badge  bg-primary rounded-pill">{{ i }}</span> </td>
                                                     <td class="infoTable"><img class="avatar avatar-lg br-7" src="{{ produit.produit.photo ? asset('images/photoProduits/' ~ produit.produit.photo) : asset('images/photoProduits/produit.png')}}" alt="img"></td>
                                                     <td class="infoTable">{{ produit.produit.libelle ? produit.produit.libelle : produit.produit.libelle }}</td>
-                                                    <td class="infoTable">{{ produit.produit.prixVente }} FCFA</td>
+                                                    <td class="infoTable">{{ produit.produit.prixVente|number_format }} FCFA</td>
                                                     <td class="infoTable">
 
                                                         {# <a href="{{ path('panier_decrementer', {'slug': produit.produit.slug })}}"  class="btn btn-sm btn-primary"><i class="fe fe-minus"></i></a> #}
@@ -113,7 +135,7 @@
                                                             
                                                     </td>
 
-                                                    <td class="infoTable"><span> {{ produit.total }} FCFA</span></td>
+                                                    <td class="infoTable"><span> {{ produit.total|number_format }} FCFA</span></td>
                                                     <td class="infoTable">
                                                         {# <a href="{{ path('details_produit', {'slug': produit.produit.slug })}}">
                                                             <span class="text-primary fs-18 me-3">
@@ -141,10 +163,10 @@
                                                     
                                                 </td>
                                                 </form>
-                                                <td style="font-weight: bold !important;font-size: 20px !important; text-align:right !important" class="font-weight-bold text-uppercase text-end h4 mb-0">
+                                                <td style="font-weight: bold !important;font-size: 16px !important; text-align:right !important" class="font-weight-bold text-uppercase text-end h4 mb-0">
                                                     {% trans %}Total Facture{% endtrans %} :
                                                 </td>
-                                                <td style="font-weight: bold !important;font-size: 20px !important; text-align:right !important" class="font-weight-bold text-uppercase text-end h4 mb-0">{{ total }} FCFA</td>
+                                                <td style="font-weight: bold !important;font-size: 16px !important; text-align:right !important" class="font-weight-bold text-uppercase text-end h4 mb-0">{{ total|number_format }} FCFA</td>
                                                 
                                             </tr>
                                             

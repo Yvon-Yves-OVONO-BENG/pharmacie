@@ -68,12 +68,12 @@
 									<h5 class="mb-1">Salut
 										<strong>{{ facture.nomPatient ? facture.nomPatient : facture.patient.nom }}</strong>,</h5>
 									Cette facture s'élève à un montant de :
-									<strong>{{ facture.netApayer }}</strong>
+									<strong>{{ facture.netApayer|number_format }}</strong>
 									FCFA
 								</div>
 								<div class="col-sm-6 text-end">
 									<span>Date de la facture</span><br>
-									<strong>{{ facture.dateFactureAt | date('d-m-Y H:i') }}</strong>
+									<strong>{{ facture.dateFactureAt | date('d-m-Y') }} - {{ facture.heure| date('H:i:s') }}</strong>
 								
 								</div>
 							</div>
@@ -150,23 +150,23 @@
 															<tr class=" ">
 																<td class="text-center " style="width: 1%">{{ p }}</td>
 																<td>{{ produitKit.produit.libelle }}</td>
-																<td class="text-end" style="width: 1%">{{ produitKit.prix }}</td>
-																<td class="text-center" style="width: 1%">{{ produitKit.quantite }}</td>
-																<td class="text-center" style="width: 1%">{{ produitKit.total }}</td>
+																<td class="text-end" style="width: 1%">{{ produitKit.prix|number_format }}</td>
+																<td class="text-center" style="width: 1%">{{ produitKit.quantite|number_format }}</td>
+																<td class="text-center" style="width: 1%">{{ produitKit.total|number_format }}</td>
 															</tr>
 														{% set p = p + 1 %}
 														{% set sousTotal = sousTotal + produitKit.total %}
 														{% endfor %}
 															<tr class=" ">
 																<td class="font-weight-bold text-uppercase text-end h5 mb-0" style="width: 1%" colspan="4">Sous total du kit</td>
-																<td class="font-weight-bold text-uppercase text-end h5 mb-0" style="width: 1%">{{ sousTotal }} FCFA</td>
+																<td class="font-weight-bold text-uppercase text-end h5 mb-0" style="width: 1%">{{ sousTotal|number_format }} FCFA</td>
 															</tr>
 													</table>
 												{% endif %}
 											</td>
-											<td class="text-center" style="vertical-align: middle !important;"><h5><span class="badge badge-default">{{ ligneDeFacture.prix }}</span></h5></td>
-											<td class="text-end" style="vertical-align: middle !important;"><h5><span class="badge badge-default">{{ ligneDeFacture.quantite }}</span></h5></td>
-											<td class="text-end" style="vertical-align: middle !important;"><h5><span class="badge badge-default">{{ ligneDeFacture.prixQuantite }}</span></h5></td>
+											<td class="text-center" style="vertical-align: middle !important;"><h5><span class="badge badge-default">{{ ligneDeFacture.prix|number_format }}</span></h5></td>
+											<td class="text-end" style="vertical-align: middle !important;"><h5><span class="badge badge-default">{{ ligneDeFacture.quantite|number_format }}</span></h5></td>
+											<td class="text-end" style="vertical-align: middle !important;"><h5><span class="badge badge-default">{{ ligneDeFacture.prixQuantite|number_format }}</span></h5></td>
 										</tr>
 
 										{% set i = i + 1 %}
@@ -174,7 +174,7 @@
 
 									<tr>
 										<td colspan="4" class="font-weight-semibold text-end">Montant HT</td>
-										<td class="text-end"><h5><span class="badge bg-primary">{{ facture.netApayer }}</span></h5></td>
+										<td class="text-end"><h5><span class="badge bg-primary">{{ facture.netApayer|number_format }}</span></h5></td>
 									</tr>
 									<tr>
 										<td colspan="4" class="font-weight-semibold text-end">TVA</td>
@@ -182,20 +182,44 @@
 									</tr>
 									<tr>
 										<td colspan="4" class="font-weight-semibold text-end">Montant à payer</td>
-										<td class="text-end"><h5><span class="badge bg-primary">{{ facture.netApayer }}</span></h5></td>
+										<td class="text-end"><h5><span class="badge bg-primary">{{ facture.netApayer|number_format }}</span></h5></td>
 									</tr>
 									<tr class="text-danger">
-										<td colspan="4" class="font-weight-bold text-uppercase text-end h4 mb-0">NET A PAYER</td>
-										<td class="font-weight-bold text-end h4 mb-0">{{ facture.netApayer }} FCFA</td>
+										<td colspan="4" class="font-weight-bold text-uppercase text-end h4 mb-0">Net à payer</td>
+										<td class="font-weight-bold text-end h4 mb-0">{{ facture.netApayer|number_format }} FCFA</td>
 									</tr>
-									<tr class="text-danger">
-										<td colspan="4" class="font-weight-bold text-uppercase text-end h4 mb-0">{% trans %}AVANCE{% endtrans %}</td>
-										<td class="font-weight-bold text-end h4 mb-0">{{ facture.avance }} FCFA</td>
-									</tr>
-									<tr class="text-danger">
-										<td colspan="4" class="font-weight-bold text-uppercase text-end h4 mb-0">{% trans %}RESTE{% endtrans %}</td>
-										<td class="font-weight-bold text-end h4 mb-0">{{ facture.netApayer - facture.avance}} FCFA</td>
-									</tr>
+									
+									{% if facture.modePaiement.modepaiement == "PRIS EN CHARGE" %}
+										<tr class="text-danger">
+											<td colspan="4" class="font-weight-bold text-uppercase text-end h4 mb-0">{% trans %}Total avance{% endtrans %}</td>
+											<td class="font-weight-bold text-end h4 mb-0">00 FCFA</td>
+										</tr>
+										<tr class="text-danger">
+											<td colspan="4" class="font-weight-bold text-uppercase text-end h4 mb-0">{% trans %}Avance du jour{% endtrans %}</td>
+											<td class="font-weight-bold text-end h4 mb-0">00 FCFA</td>
+										</tr>
+										<tr class="text-danger">
+											<td colspan="4" class="font-weight-bold text-uppercase text-end h4 mb-0">{% trans %}Reste{% endtrans %}</td>
+											<td class="font-weight-bold text-end h4 mb-0">{{ facture.netApayer|number_format }} FCFA</td>
+										</tr>
+										{% else %}
+										
+										<tr class="text-danger">
+											<td colspan="4" class="font-weight-bold text-uppercase text-end h4 mb-0">{% trans %}Total avance{% endtrans %}</td>
+											<td class="font-weight-bold text-end h4 mb-0">{{ (facture.netApayer - facture.reste)|number_format }} FCFA</td>
+										</tr>
+										<tr class="text-danger">
+											<td colspan="4" class="font-weight-bold text-uppercase text-end h4 mb-0">{% trans %}Avance du jour{% endtrans %}</td>
+											<td class="font-weight-bold text-end h4 mb-0">{{ facture.avance|number_format }} FCFA</td>
+										</tr>
+										<tr class="text-danger">
+											<td colspan="4" class="font-weight-bold text-uppercase text-end h4 mb-0">{% trans %}Reste{% endtrans %}</td>
+											<td class="font-weight-bold text-end h4 mb-0">{{ facture.reste|number_format }} FCFA</td>
+										</tr>
+
+									{% endif %}
+									
+
 									<tr>
 										<td colspan="5" class="text-end">
 											{% if is_granted('ROLE_CAISSIERE') or is_granted('ROLE_ADMINISTRATEUR') %}

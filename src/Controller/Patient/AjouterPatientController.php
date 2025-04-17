@@ -32,9 +32,13 @@ class AjouterPatientController extends AbstractController
     #[Route('/ajouter-patient', name: 'ajouter_patient')]
     public function ajouterPatient(Request $request): Response
     {
-        
         # je récupère ma session
         $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
         
         #mes variables témoin pour afficher les sweetAlert
         $maSession->set('ajout', null);
@@ -51,8 +55,6 @@ class AjouterPatientController extends AbstractController
         #je demande à mon formulaire de récupérer les donnéesqui sont dans le POST avec la $request
         $form->handleRequest($request);
         
-        
-
         #je teste si mon formulaire est soumis et valide
         if ($form->isSubmitted() && $form->isValid()) 
         {
@@ -82,7 +84,8 @@ class AjouterPatientController extends AbstractController
 
             #je met le nom de la Sous Categorie en CAPITAL LETTER
             $patient->setNom($this->strService->strToUpper($patient->getNom()))
-                    ->setCode('PAT-'.$code.$id);
+                    ->setCode('PAT-'.$code.$id)
+                    ->setTermine(0);
             
             # je prépare ma requête avec entityManager
             $this->em->persist($patient);
@@ -95,8 +98,6 @@ class AjouterPatientController extends AbstractController
 
             #j'affecte 1 à ma variable pour afficher le message
             $maSession->set('ajout', 1);
-            
-            
             
             #je déclare une nouvelle instace d'une Sous Categorie
             $patient = new Patient;

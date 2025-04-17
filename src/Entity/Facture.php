@@ -67,6 +67,9 @@ class Facture
     #[ORM\ManyToOne(inversedBy: 'factures')]
     private ?Prescripteur $prescripteur = null;
 
+    #[ORM\Column]
+    private ?int $reste = null;
+
     public function __construct()
     {
         $this->ligneDeFactures = new ArrayCollection();
@@ -314,6 +317,18 @@ class Facture
     public function setPrescripteur(?Prescripteur $prescripteur): static
     {
         $this->prescripteur = $prescripteur;
+
+        return $this;
+    }
+
+    public function getReste(): ?int
+    {
+        return $this->reste;
+    }
+
+    public function setReste(int $reste): static
+    {
+        $this->reste = $reste;
 
         return $this;
     }

@@ -30,6 +30,14 @@ class ImpressionEtatStockController extends AbstractController
     #[Route('/impression-etat-stock/{periode}', name: 'impression_etat_stock')]
     public function impressionProduit(Request $request, int $periode = 0): Response
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+        
         if ($periode) 
         {
             if ($request->request->has('impressionEtatStock')) 

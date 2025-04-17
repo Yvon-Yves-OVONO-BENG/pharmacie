@@ -30,6 +30,14 @@ class ImpressionEtatDeVenteController extends AbstractController
     #[Route('/impression-etat-de-vente/{periode}', name: 'impression_etat_de_vente')]
     public function impressionFicheEtatDente(Request $request, int $periode = 0): Response
     {
+        # je récupère ma session
+        $maSession = $request->getSession();
+
+        if(!$maSession)
+        {
+            return $this->redirectToRoute("app_logout");
+        }
+        
         $dateDebut = null;
         $dateFin = null;
 
