@@ -83,6 +83,9 @@ class Produit
     #[ORM\Column]
     private ?bool $retire = null;
 
+    #[ORM\Column]
+    private ?bool $examen = null;
+
     public function __construct()
     {
         $this->ligneDeFactures = new ArrayCollection();
@@ -443,6 +446,18 @@ class Produit
     public function setRetire(bool $retire): static
     {
         $this->retire = $retire;
+
+        return $this;
+    }
+
+    public function isExamen(): ?bool
+    {
+        return $this->examen;
+    }
+
+    public function setExamen(bool $examen): static
+    {
+        $this->examen = $examen;
 
         return $this;
     }

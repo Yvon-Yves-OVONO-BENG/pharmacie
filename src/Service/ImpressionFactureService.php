@@ -8,16 +8,13 @@ use App\Service\EntetePaysage;
 use App\Service\EntetePortrait;
 use App\Entity\ElementsPiedDePage\PDF;
 
-
-
 class ImpressionFactureService extends FPDF
 {
     public function __construct(
         protected EntetePaysage $entetePaysage, 
         protected EntetePortraitFacture $entetePortraitFacture,
         )
-    {
-    }
+    {}
 
     public function impressionFacture($facture, $detailsFacture): PDF
     {
@@ -92,7 +89,7 @@ class ImpressionFactureService extends FPDF
             $pdf->SetX(15);
             $pdf->SetFont('Arial', '', 10);
             $pdf->Cell(20, 5, utf8_decode("Téléphone : "), 0, 0, 'L', 0);
-            $pdf->Cell(100, 5, utf8_decode($facture->getContactPatient() ? $facture->getContactPatient() : ""), 0, 1, 'L', 0);
+            $pdf->Cell(100, 5, utf8_decode($facture->getContactPatient() ? $facture->getContactPatient() : $facture->getPatient()->getTelephone()), 0, 1, 'L', 0);
 
         }
         
@@ -226,6 +223,12 @@ class ImpressionFactureService extends FPDF
 
         if ($facture->getModePaiement()->getModePaiement() == ConstantsClass::PRIS_EN_CHARGE ) 
         {
+
+            $pdf->SetX(15);
+            $pdf->SetFillColor(202, 219, 255);
+            $pdf->Cell(142, 5, utf8_decode('Avance du jour'), 0, 0, 'R');
+            $pdf->Cell(40, 5, utf8_decode("00 FCFA"), 1, 1, 'C', true);
+
             $pdf->SetX(15);
             $pdf->SetFillColor(202, 219, 255);
             $pdf->Cell(142, 5, utf8_decode('Total avance'), 0, 0, 'R');
@@ -233,12 +236,7 @@ class ImpressionFactureService extends FPDF
             
             $pdf->SetX(15);
             $pdf->SetFillColor(202, 219, 255);
-            $pdf->Cell(142, 5, utf8_decode('Avance du jour'), 0, 0, 'R');
-            $pdf->Cell(40, 5, utf8_decode("00 FCFA"), 1, 1, 'C', true);
-            
-            $pdf->SetX(15);
-            $pdf->SetFillColor(202, 219, 255);
-            $pdf->Cell(142, 5, utf8_decode('Reste'), 0, 0, 'R');
+            $pdf->Cell(142, 5, utf8_decode('Reste à payer'), 0, 0, 'R');
             $pdf->Cell(40, 5, utf8_decode(number_format($facture->getNetApayer(), 0, '', ' ')." FCFA"), 1, 1, 'C', true);
 
         }
@@ -246,31 +244,28 @@ class ImpressionFactureService extends FPDF
         {
             $pdf->SetX(15);
             $pdf->SetFillColor(202, 219, 255);
-            $pdf->Cell(142, 5, utf8_decode('Total avance'), 0, 0, 'R');
-            $pdf->Cell(40, 5, utf8_decode(number_format($facture->getNetApayer() - $facture->getReste(), 0, '', ' ')." FCFA"), 1, 1, 'C', true);
-            
-            $pdf->SetX(15);
-            $pdf->SetFillColor(202, 219, 255);
             $pdf->Cell(142, 5, utf8_decode('Avance du jour'), 0, 0, 'R');
             $pdf->Cell(40, 5, utf8_decode(number_format($facture->getAvance(), 0, '', ' ')." FCFA"), 1, 1, 'C', true);
             
             $pdf->SetX(15);
             $pdf->SetFillColor(202, 219, 255);
-            $pdf->Cell(142, 5, utf8_decode('Reste'), 0, 0, 'R');
+            $pdf->Cell(142, 5, utf8_decode('Total avance'), 0, 0, 'R');
+            $pdf->Cell(40, 5, utf8_decode(number_format($facture->getNetApayer() - $facture->getReste(), 0, '', ' ')." FCFA"), 1, 1, 'C', true);
+            
+            
+            $pdf->SetX(15);
+            $pdf->SetFillColor(202, 219, 255);
+            $pdf->Cell(142, 5, utf8_decode('Reste à payer'), 0, 0, 'R');
             $pdf->Cell(40, 5, utf8_decode(number_format($facture->getReste(), 0, '', ' ')." FCFA"), 1, 1, 'C', true);
 
         }
         
-        
-
         $pdf->Ln(-5);
         $pdf->SetX($pdf->GetX() + 15);
         $pdf->SetY($pdf->GetY() + 15);
         $pdf->SetFont('Arial', 'BU', 12);
         $pdf->Cell(142, 5, utf8_decode('LA CAISSIERE'), 0, 0, 'R');
 
-        
-        
         $pdf->AliasNbPages();
         return $pdf;
     }

@@ -66,16 +66,19 @@
                                                 <i class="fa fa-user"></i> {% trans %}Caissière{% endtrans %}
                                             </th>
                                             <th class="wd-15p border-bottom-0">
-                                                <i class="fa fa-houzz"></i> {% trans %}Type Produit{% endtrans %}
+                                                <i class="fa fa-houzz"></i> {% trans %}Référence{% endtrans %}
                                             </th>
                                             <th class="wd-15p border-bottom-0">
                                                 <i class="fa fa-credit-card"></i> Mode paiement
                                             </th>
                                             <th class="wd-10p border-bottom-0">
-                                                <i class="fa fa-calculator"></i> {% trans %}Nombre type produit{% endtrans %}
+                                                <i class="fa fa-calculator"></i> {% trans %}Net à payer{% endtrans %}
                                             </th>
-                                            <th class="wd-15p border-bottom-0">
-                                                <i class="si si-wallet"></i> {% trans %}Montant{% endtrans %}
+                                            <th class="wd-10p border-bottom-0">
+                                                <i class="fa fa-calculator"></i> {% trans %}Avance{% endtrans %}
+                                            </th>
+                                            <th class="wd-10p border-bottom-0">
+                                                <i class="fa fa-calculator"></i> {% trans %}Reste{% endtrans %}
                                             </th>
                                             
                                         </tr>
@@ -89,23 +92,26 @@
                                                 <i class="fa fa-user"></i> {% trans %}Caissière{% endtrans %}
                                             </th>
                                             <th class="wd-15p border-bottom-0">
-                                                <i class="fa fa-houzz"></i> {% trans %}Type Produit{% endtrans %}
+                                                <i class="fa fa-houzz"></i> {% trans %}Référence{% endtrans %}
                                             </th>
                                             <th class="wd-15p border-bottom-0">
                                                 <i class="fa fa-credit-card"></i> Mode paiement
                                             </th>
                                             <th class="wd-10p border-bottom-0">
-                                                <i class="fa fa-calculator"></i> {% trans %}Nombre type produit{% endtrans %}
+                                                <i class="fa fa-calculator"></i> {% trans %}Net à payer{% endtrans %}
                                             </th>
-                                            <th class="wd-15p border-bottom-0">
-                                                <i class="si si-wallet"></i> {% trans %}Montant{% endtrans %}
+                                            <th class="wd-10p border-bottom-0">
+                                                <i class="fa fa-calculator"></i> {% trans %}Avance{% endtrans %}
+                                            </th>
+                                            <th class="wd-10p border-bottom-0">
+                                                <i class="fa fa-calculator"></i> {% trans %}Reste{% endtrans %}
                                             </th>
                                             
                                         </tr>
                                     </tfoot>
                                     <tbody>
                                         {% set i = 1 %}
-                                        {% for recetteDuJour in recettesDuJour %}
+                                        {% for factureDuJour in facturesDuJour %}
                                             <tr>
                                                 <td class="infoTable">
                                                     <span class="badge badge-default">{{ i }}</span>
@@ -113,44 +119,37 @@
                                                 <td class="infoTable">
 
                                                     <button type="button" class="btn btn-primary btn-sm btn-block position-relative me-5 mb-2">
-                                                        {{ recetteDuJour.caissiere }}
+                                                        {{ factureDuJour.caissiere.nom }}
                                                     </button>
                                                     
                                                 </td>
 
                                                 <td class="infoTable">
-                                                    {% if recetteDuJour.typeProduit == 'Médicament' %}
-                                                        <a href="javascript:void(0);" class="btn btn-success">{{ recetteDuJour.typeProduit}}</a>
-
-                                                        {% else %}
-                                                        {% if recetteDuJour.typeProduit == 'Acte' %}
-                                                            <a href="javascript:void(0);" class="btn btn-primary">{{ recetteDuJour.typeProduit}}</a>
-                                                            {% else %}
-                                                            <a href="javascript:void(0);" class="btn btn-info">{{ recetteDuJour.typeProduit}}</a>
-
-                                                        {% endif %}
-                                                    {% endif %}
-                                                    
+                                                    <a href="javascript:void(0);" class="btn btn-primary">{{ factureDuJour.reference}}</a>
                                                 </td>
 
                                                 <td class="infoTable">
-                                                    {% if recetteDuJour.modePaiement == 'CASH' %}
-                                                        <span class="bg-success px-2 py-1 text-white br-7">{{ recetteDuJour.modePaiement }} </span>
+                                                    {% if factureDuJour.modePaiement.modePaiement == 'CASH' %}
+                                                        <span class="bg-success px-2 py-1 text-white br-7">{{ factureDuJour.modePaiement.modePaiement  }} </span>
                                                         {% else %}
-                                                        {% if recetteDuJour.modePaiement == 'PRIS EN CHARGE' %}
-                                                            <span class="bg-info px-2 py-1 text-white br-7">{{ recetteDuJour.modePaiement }} </span>
+                                                        {% if factureDuJour.modePaiement == 'PRIS EN CHARGE' %}
+                                                            <span class="bg-info px-2 py-1 text-white br-7">{{ factureDuJour.modePaiement.modePaiement  }} </span>
                                                             {% else %}
-                                                            <span class="bg-danger px-2 py-1 text-white br-7">{{ recetteDuJour.modePaiement }} </span>
+                                                            <span class="bg-danger px-2 py-1 text-white br-7">{{ factureDuJour.modePaiement.modePaiement  }} </span>
                                                         {% endif %}
                                                     {% endif %}
                                                 </td>
-                                                <td class="infoTable">
-                                                    <span class="badge bg-primary rounded-pill">{{ recetteDuJour.nombreTypeProduit  }}</span>
-                                                </td>
-
                                                 <td class="infoTable" style="vertical-align: middle !important;">
-                                                    <h5><span class="badge badge-default">{{ recetteDuJour.montant|number_format }} FCFA</span></h5>
+                                                    <h5><span class="badge badge-default">{{ factureDuJour.netAPayer }} FCFA</span></h5>
                                                 </td>
+                                                <td class="infoTable" style="vertical-align: middle !important;">
+                                                    <h5><span class="badge badge-default">{{ factureDuJour.avance }} FCFA</span></h5>
+                                                </td>
+                                                <td class="infoTable" style="vertical-align: middle !important;">
+                                                    <h5><span class="badge bg-danger">{{ factureDuJour.netAPayer - factureDuJour.avance }} FCFA</span></h5>
+                                                </td>
+                                                
+                                                
                                                 
                                             </tr>
                                             {% set i = i + 1 %}

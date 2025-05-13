@@ -45,7 +45,7 @@ class CaissesSepareesDuJourController extends AbstractController
         $maSession->set('suppression', null);
         
         #la date du jour
-        $aujourdhui = new DateTime('now');
+        $aujourdhui = new DateTime('today');
         
         $recettesDuJour = $this->factureRepository->recetteDujour($aujourdhui);
         // dd($recettesDuJour);

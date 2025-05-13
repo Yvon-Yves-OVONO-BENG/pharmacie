@@ -55,7 +55,9 @@ class CaissesSepareesDunJourParticulierController extends AbstractController
         {
             $dateDuJour = date_create($request->request->get('dateDuJour'));
             
-            $recettesDuJour = $this->ligneDeFactureRepository->recetteDunJourParticulier($dateDuJour);
+            // $recettesDuJour = $this->ligneDeFactureRepository->recetteDunJourParticulier($dateDuJour);
+
+            $recettesDuJour = $this->factureRepository->recetteDujour($dateDuJour);
 
             $recettesKitDuJour = $this->factureRepository->kitsVenduParCaissiereDunJourParticulier($dateDuJour);
 

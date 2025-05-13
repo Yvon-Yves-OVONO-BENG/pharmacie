@@ -57,7 +57,8 @@ class CaissesSepareesDunePeriodeController extends AbstractController
             $dateDebut = date_create($request->request->get('dateDebut'));
             $dateFin = date_create($request->request->get('dateFin'));
             
-            $recettesDuJour = $this->ligneDeFactureRepository->recetteDunePeriode($dateDebut, $dateFin);
+            // $recettesDuJour = $this->ligneDeFactureRepository->recetteDunePeriode($dateDebut, $dateFin);
+            $recettesDuJour = $this->factureRepository->recetteDunePeriode($dateDebut, $dateFin);
 
             $recettesKitDuJour = $this->factureRepository->kitsVenduParCaissiereDunePeriode($dateDebut, $dateFin);
 

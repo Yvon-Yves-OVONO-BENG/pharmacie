@@ -84,7 +84,7 @@ class AjouterExamenController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) 
         {
-            $examen->setExamen($this->strService->strToUpper($examen->getLibelle()))
+            $examen->setLibelle($this->strService->strToUpper($examen->getLibelle()))
             ->setExamen(1)
             ->setSupprime(0)
             ->setSlug($slug.$id)

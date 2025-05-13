@@ -419,6 +419,44 @@ class FactureRepository extends ServiceEntityRepository
 
 
 
+    public function recetteDunePeriode(DateTime $dateDebut, DateTime $dateFin): array
+    {
+        $queryBuilder = $this->em->createQueryBuilder();
+        $queryBuilder
+                ->select('u.nom AS caissiere', 'tp.typeProduit AS typeProduit', 
+                'm.modePaiement AS modePaiement', 'COUNT(tp.typeProduit) AS nombreTypeProduit', 
+                'SUM(ldf.prixQuantite) AS montant')
+                ->from(Facture::class, 'f')
+                ->innerJoin(LigneDeFacture::class, 'ldf')
+                ->innerJoin(Produit::class, 'p')
+                ->innerJoin(Lot::class, 'lt')
+                ->innerJoin(TypeProduit::class, 'tp')
+                ->innerJoin(ModePaiement::class, 'm')
+                ->innerJoin(EtatFacture::class, 'etf')
+                ->innerJoin(User::class, 'u')
+                ->andWhere('p.id = ldf.produit')
+                ->andWhere('lt.id = p.lot')
+                ->andWhere('tp.id = lt.typeProduit')
+                ->andWhere('f.id = ldf.facture')
+                ->andWhere('m.id = f.modePaiement')
+                ->andWhere('etf.id = f.etatFacture')
+                ->andWhere('u.id = f.caissiere')
+                ->andWhere('p.supprime = 0')
+                ->andWhere('p.kit = 0')
+                ->andWhere('f.annulee = 0')
+                ->andWhere('f.dateFactureAt BETWEEN :dateDebut AND :dateFin')
+                ->setParameter('dateDebut', date_format($dateDebut, 'Y-m-d'))
+                ->setParameter('dateFin', date_format($dateFin, 'Y-m-d'))
+                ->groupBy('caissiere','typeProduit', 'modePaiement')
+                ;
+
+        $query = $queryBuilder->getQuery();
+
+        return $query->execute();
+    }
+
+
+
     //    /**
     //     * @return Facture[] Returns an array of Facture objects
     //     */

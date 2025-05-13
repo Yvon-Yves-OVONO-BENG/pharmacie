@@ -100,6 +100,7 @@ class AjouterKitController extends AbstractController
             $kit->setKit($this->strService->strToUpper($kit->getLibelle()))
             ->setPrixVente($prix)
             ->setKit(1)
+            ->setExamen(0)
             ->setSupprime(0)
             ->setSlug($slug.$id)
             ->setPhoto(ConstantsClass::NOM_PRODUIT)
