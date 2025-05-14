@@ -1,56 +1,69 @@
-document.addEventListener('DOMContentLoaded', function() {
-    $('.custom-switch-input').change(function() {
-        let produitId = $(this).data('id');
-        let isChecked = $(this).is(':checked');
+$(document).ready(function () {
+    $(document).off('change', '.retirer-toggle');
+
+	$(document).on('change', '.retirer-toggle', function () {
+        console.log("Checkbox changée une seulle fois");
         
-        ///je cree un nouvel objet XMLHttpRequest
-			var xhr = new XMLHttpRequest();
-			xhr.open('POST', '/pharmacie/public/produit/retirer-produit', true);
-			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xhr.onreadystatechange = function() 
-			{
-				if (xhr.readyState === 4 && xhr.status === 200) 
-				{
-					var response = JSON.parse(xhr.responseText);
-					if (response.success) 
-					{
-						if (isChecked == false) {
-							notif({
-								msg: "<b>Produit ajouté dans les étagères avec succès !</b>",
-								type: "success",
-								position: "right",
-								width: 500,
-								height: 60,
-								autohide: true
-								});
-						}
-						else if(isChecked == true){
-							notif({
-								msg: "<b>Produit retiré des étagètes avec succès !</b>",
-								type: "error",
-								position: "left",
-								width: 500,
-								height: 60,
-								autohide: true
-								});
-						}
-					}
-					else 
-					{
-						notif({
-							msg: "<b>Erreur lors de la mise à jour du produit !</b>",
-							type: "danger",
-							position: "left",
-							width: 500,
-							height: 60,
-							autohide: true
-							});
-					}
+		let = checkbox = $(this);
+		let produitId = checkbox.data('id');
+		const url =checkbox.data('url');
+		
+		
+		$.ajax({
+			url: url,
+			method: 'POST',
+			data: {
+				id: produitId
+			},
+			headers: {
+				'X-Requested-With': 'XMLHttpRequest'
+			},
+			success: function (response) {
+				if (response.success) {
+					//je désactive temporairement le checkbox
+					checkbox.prop('disabled', response.retirer);
+
+					Swal.fire({
+						toast: true,
+						position: 'top-end',
+						icon: response.retirer ? 'success' : 'info',
+						title: response.retirer ?
+							'Produit retiré des étagères !'
+							: 'Produit remis en vente !',
+						showConfirmButton: false,
+						timer: 5000,
+						timerProgressBar: true
+					});
+				} else {
+					Swal.fire({
+						toast: true,
+						position: 'top-start',
+						icon: 'error',
+						title: 'Echec de la mise à jour',
+						showConfirmButton: false,
+						timer: 5000,
+						timerProgressBar: true
+					});
+					checkbox.prop('checked', !checked.prop('checked'));
 				}
-			};
-			
-			//j'envoie la request avec le produit ID
-			xhr.send('produit_id=' + produitId);
-        
-    });
+			},
+			error: function () {
+				Swal.fire({
+					toast: true,
+					position: 'top-end',
+					icon: 'error',
+					title: 'Erreur de communication avec le serveur !',
+					showConfirmButton: false,
+					timer: 5000,
+					timerProgressBar: true
+				});
+
+				//rollback si Erreur
+				checkbox.prop('checked', !checkbox.prop('checked'));
+			},
+			complete: function () {
+				checkbox.prop('disabled', false);
+			}
+		});
+	});
 });

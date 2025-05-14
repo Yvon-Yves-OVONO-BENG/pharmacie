@@ -7,125 +7,135 @@
         {% trans %}Modification d'un kit{% endtrans %}
     {% endif %}    
 {% endblock %}
-
+{% block stylesheets %}
+	<style>
+		.kit-produit-item {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+	</style>
+{% endblock %}
 {% block body %}
-<!-- App-Content -->
-        <div class="hor-content main-content">
-            <div class="container">
-
-                <!--Page header-->
-                <div class="page-header">
-                    <div class="page-leftheader">
-                        <h4 class="page-title mb-0 text-primary">
-                        <i class="fe fe-package me-2"></i>
-                            {% if slug == 0 %}
-                                {% trans %}Enregistrement d'un kit{% endtrans %}
-                                {% else %}
-                                {% trans %}Modification d'un kit{% endtrans %}
-                            {% endif %}
-                        </h4>
-                    </div>
-                    <div class="page-rightheader">
-                        <div class="btn-list">
-                            <a href="{{ path ('liste_kit', {'a': 1 }) }}" class="btn btn-outline-primary"><i class="fe fe-list me-2"></i>
-                                {% trans %}Afficher les kits{% endtrans %}</a>
-                            
-                        </div>
-                    </div>
-                </div>
-
-                {% if slug == 0 %}
-                    <div class="card border-primary">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                            <i class="fe fe-plus-circle me-2"></i>
-                                {% trans %}Ajouter un kit{% endtrans %}
-                            </h3>
-                        </div>
-                    {% else %}
-                    <div class="card border-danger">
-                        <div class="card-header">
-                            <div class="col-md-2">
-                                <div class="box-widget widget-user text-center">
-                                    <div class="widget-user-image mx-auto">
-                                        <a href="javascript:void(0);">
-                                            <img alt="{{ kit.libelle }}" class="rounded-circle" src="{{ kit.photo ? asset('images/photoProduits/' ~ kit.photo) : asset('images/photoProduits/produit.png')}}" width="100" height="100">
-                                        </a>
-
-                                    </div>
-                                </div>
+    <!-- Row starts -->
+        <div class="row gx-3">
+            <div class="col-sm-12">
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h5 class="card-title text-info">
+                                    {% if slug == 0 %}
+                                        <i class="fa fa-eercast me-2"></i>
+                                        {% trans %}Ajout d'un kit{% endtrans %}
+                                        {% else %}
+                                        <i class="fa fa-eercast  me-2"></i>
+                                        {% trans %}Modification de : {% endtrans %} {{ kit.libelle }}
+                                    {% endif %}
+                                </h5>
                             </div>
-                            <div class="col-md-10">
-                                <h3 class="card-title">
-                                    {% trans %}Modification du kit : {% endtrans %} {{ kit.libelle }}
-                                </h3>
+                            <div class="col-md-6" style="text-align: right !important;">
+                                <a href="{{ path ('liste_kit', {'a': 1 }) }}" class="btn btn-primary"><i class="fe fe-list me-2"></i>
+                                    {% trans %}Afficher les kits{% endtrans %}
+                                </a>
                             </div>
-                            
-                            
                         </div>
-                {% endif %}
+                    </div>
                     
-
                     <div class="card-body ">
-                        {{ form_start(formProduit, {'attr': {'class':'row g-4 needs-validation', 'novalidate':""}})}}
+                        {{ form_start(formProduit) }}
 
-                            {# PARTIE KIT #}
-
-                            <div class="row" id="kitForm" style="margin-top: 15px !important;">
-                                <div class="col-md-4"></div>
-                                <div class="col-md-4 position-relative">
-                                    <label for="validationCustom01" class="form-label" style="text-align: center !important;">{% trans %}Nom du kit{% endtrans %}</label>
-                                    {{ form_widget(formProduit.libelle, {'attr': {'id':'validationCustom02'}}) }}
-
-                                    <div class="invalid-feedback">
-                                        {% trans %}Veuillez saisir le nom du kit !{% endtrans %}
-                                    </div>
+                            <div class="row">
+                                <div class="col-md-3"></div>
+                                <div class="col-md-6">
+                                    {{ form_row(formProduit.libelle) }}
                                 </div>
-                                <div class="col-md-4"></div>
+                                <div class="col-md-3"></div>
                             </div>
                             
-                                
-                            <div class="row" id="kitForm" >
-                                <div class="col-md-4"></div>
 
-                                <div class="col-md-4"  style="margin-top: 15px !important;" id="kit" data-prototype="{{ form_row(formProduit.produitLigneDeKits.vars.prototype)|e('html_attr') }}">
-                                    
-                                    {% for produit in formProduit.produitLigneDeKits %}
-                                        {{ form_row(produit, {'attr': {'class': 'defaultHidden'}})}}
+                            {# <div id="kit_produits_container" data-prototype="{{ form_widget(formProduit.produitLigneDeKits.vars.prototype)|e('html_attr') }}">
+                                {% for produitForm in formProduit.produitLigneDeKits %}
+                                    <div class="kit-produit-item">
 
-                                    {% endfor %}
-                                    {# {{ form_widget(formProduit.produitLigneDeKits, {'attr': {'id':'validationCustom04'}}) }} #}
-                                    
-                                    <span></span>
+                                        <div class="col-md-4">
+                                            {{ form_row(produitForm.produit) }}
+                                        </div>
+                                        <div class="col-md-4">
+                                            {{ form_row(produitForm.quantite) }}
+                                        </div>
+                                        <div class="col-md-4">
+                                            <button type="button" class="btn btn-danger remove-item">Supprimer</button>
+                                        </div>
+                                        
+                                    </div>
+                                {% endfor %}
+                            </div> #}
+
+                            <div id="kit_produits_container"
+                            data-prototype="
+                                <div class='kit-produit-item row align-items-end mb-2'>
+                                    <div class='col-md-1'>
+                                    </div>
+                                    <div class='col-md-5'>
+                                        {{ form_label(formProduit.produitLigneDeKits.vars.prototype.produit)|e('html_attr') }}
+                                        {{ form_widget(formProduit.produitLigneDeKits.vars.prototype.produit)|e('html_attr') }}
+                                    </div>
+                                    <div class='col-md-3'>
+                                        {{ form_label(formProduit.produitLigneDeKits.vars.prototype.quantite)|e('html_attr') }}
+                                        {{ form_widget(formProduit.produitLigneDeKits.vars.prototype.quantite)|e('html_attr') }}
+                                    </div>
+                                    <div class='col-md-2'>
+                                        <button type='button' class='btn btn-danger remove-item'>Supprimer1</button>
+                                    </div>
+
                                 </div>
+                            ">
+                        </div>
+
+                            <div class="row">
                                 <div class="col-md-4"></div>
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4 text-end">
+                                    <button type="button" id="add-produit" class="btn btn-primary mt-2">Ajouter un produit</button>
 
-                            </div>
-
-                            {# FIN PARTIE KIT #}
-                            <div class="row" style="margin-top: 15px !important;">
-                                <div class="col-md-12 position-relative text-center" style="margin-top: 30px !important;">
-                                    <button type="submit" class="btn btn-outline-primary btn-md">
-                                        <i class="fe fe-save"></i> 
-                                        {% if slug == 0 %}
-                                            {% trans %}Enregistrer{% endtrans %}
-                                            {% else %}
-                                            {% trans %}Enregistrer les modifications{% endtrans %}
-                                        {% endif %}
-                                    </button>
+                                    <button type="submit" class="btn btn-success mt-2">Enregistrer</button>
                                 </div>
                             </div>
-                        {{ form_end(formProduit)}}
+                            
+
+                        {{ form_end(formProduit) }}
 
                     </div>
                 
+                </div>
             </div>
         </div>
     </div>
-</div>
+    <script>
+           document.addEventListener('DOMContentLoaded', () => {
+        const container = document.getElementById('kit_produits_container');
+        const addButton = document.getElementById('add-produit');
+        let index = container.querySelectorAll('.kit-produit-item').length;
+
+        addButton.addEventListener('click', () => {
+            const prototype = container.dataset.prototype;
+            const newForm = prototype.replace(/_name_/g, index);
+            const div = document.createElement('div');
+            div.classList.add('kit-produit-item');
+            div.innerHTML = newForm ;
+            container.appendChild(div);
+            index++;
+        });
+
+        container.addEventListener('click', (e) => {
+            if (e.target && e.target.classList.contains('remove-item')) {
+                e.target.closest('.kit-produit-item').remove();
+            }
+        });
+    });
+
+    </script>
 {% endblock %}
-{% block javascripts %}
-<script src="{{asset('js/choixTypeProduit.js')}}"></script>
-<script src="{{asset('js/ajoutKit.js')}}"></script>
-    
-{% endblock %}
+

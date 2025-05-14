@@ -88,7 +88,8 @@
 						<td>
 							<div class="form-group">
 								<label class="custom-switch">
-									<input type="checkbox" class="custom-switch-input" data-id="{{ produit.id }}" {% if produit.retire %}checked{% endif %} >
+									<input type="checkbox" class="custom-switch-input" data-id="{{ produit.id }}" {% if produit.retire %}checked{% endif %} 
+									data-url="{{ path ('retirer_produit') }}">
 									<span class="custom-switch-indicator custom-switch-indicator-lg"></span>
 								</label>
 							</div>
